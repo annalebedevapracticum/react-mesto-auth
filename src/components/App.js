@@ -4,6 +4,8 @@ import Login from './Login.js';
 import Register from './Register.js';
 import ProtectedRoute from './ProtectedRoute';
 import CardList from './CardList.js';
+import Header from './Header.js';
+import InfoTooltip from './InfoTooltip.js';
 
 const App = () => {
     const [userData, setUserData] = useState({
@@ -35,20 +37,28 @@ const App = () => {
         return '...Loading';
     }
 
-    return (<BrowserRouter>
-        <Routes>
-            <Route path="/sign-in" element={<Login isLoggedId={loggedIn} onLogin={cbLogin} />} />
-            <Route path="/sign-up" element={<Register onRegister={cbRegister} />} />
-            <Route element={loggedIn ? <Navigate to="/" /> : <Navigate to="/sign-in" />} />
-            <Route path="/" element={
-                <ProtectedRoute loggedIn={loggedIn}>
-                    <CardList />
-                </ProtectedRoute>
-            } />
-
-
-        </Routes>
-    </BrowserRouter>)
+    return (
+        <div className="wrapper">
+            <div className="page">
+                <Header isLogged={true} isRegistration={true} />
+                <div className="content">
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path="/sign-in" element={<Login isLoggedId={loggedIn} onLogin={cbLogin} />} />
+                            <Route path="/sign-up" element={<Register onRegister={cbRegister} />} />
+                            <Route element={loggedIn ? <Navigate to="/" /> : <Navigate to="/sign-in" />} />
+                            <Route path="/" element={
+                                <ProtectedRoute loggedIn={loggedIn}>
+                                    <CardList />
+                                </ProtectedRoute>
+                            } />
+                        </Routes>
+                    </BrowserRouter>
+                    <InfoTooltip isError={true} isOpen/>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default App;

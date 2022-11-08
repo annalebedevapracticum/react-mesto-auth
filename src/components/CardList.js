@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Footer from "./Footer";
-import Header from "./Header";
 import Main from "./Main";
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { apiInstance } from "../utils/Api";
@@ -112,27 +111,22 @@ function CardList() {
       loading,
       setLoading
     }}>
-      <div className="wrapper">
-        <div className="page">
-          <Header />
-          <Main onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick}
-            closeAllPopups={closeAllPopups}
-            setSelectedCard={setSelectedCard}
-            cards={cards}
-            onCardDelete={handleCardDeleteClick}
-            onCardLike={handleCardLike}
-          />
-          <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
-          <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
-          <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
-          <ImagePopup isOpen={!!selectedCard} onClose={closeAllPopups} selectedCard={selectedCard} />
-          <PopupWithForm name='confirmation' title='Вы уверены?' isOpen={isConfirmationPopupOpen} onClose={closeAllPopups} submitText="Да" onSubmit={handleConfirmationSubmit} isLoading={loading}/>
+      <Main onEditProfile={handleEditProfileClick}
+        onAddPlace={handleAddPlaceClick}
+        onEditAvatar={handleEditAvatarClick}
+        closeAllPopups={closeAllPopups}
+        setSelectedCard={setSelectedCard}
+        cards={cards}
+        onCardDelete={handleCardDeleteClick}
+        onCardLike={handleCardLike}
+      />
+      <EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups} onUpdateUser={handleUpdateUser} />
+      <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar} />
+      <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
+      <ImagePopup isOpen={!!selectedCard} onClose={closeAllPopups} selectedCard={selectedCard} />
+      <PopupWithForm name='confirmation' title='Вы уверены?' isOpen={isConfirmationPopupOpen} onClose={closeAllPopups} submitText="Да" onSubmit={handleConfirmationSubmit} isLoading={loading} />
 
-          <Footer />
-        </div>
-      </div>
+      <Footer />
     </CurrentUserContext.Provider>
   );
 }
