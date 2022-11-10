@@ -5,6 +5,8 @@ class Api {
     this._baseUrl = options.baseUrl;
     this._headers = options.headers;
     this._updateUrl = options.updateUrl;
+    this._authHeaders = options.authHeaders;
+    this._authUrl = options.authUrl;
   }
 
   getUserInfo() {
@@ -81,6 +83,38 @@ class Api {
       })
     })
   }
+  register({ email, password }) {
+    return request(`${this._authUrl}/signup`, {
+      method: 'POST',
+      headers: this._authHeaders,
+      body: JSON.stringify({
+        email,
+        password
+      })
+    })
+  }
+
+  authorize({ email, password }) {
+    return request(`${this._authUrl}/signin`, {
+      method: 'POST',
+      headers: this._authHeaders,
+      body: JSON.stringify({
+        email,
+        password
+      })
+    })
+  }
+
+  checkMe(token) {
+    return request(`${this._authUrl}/users/me`, {
+      method: 'GET',
+      headers: { 
+        ...this._authHeaders, 
+        "Authorization": `Bearer ${token}` 
+      }
+    })
+  }
+
 }
 
 export default Api;
@@ -89,6 +123,10 @@ export default Api;
 export const apiInstance = new Api({
   baseUrl: 'https://nomoreparties.co/v1/cohort-50',
   updateUrl: 'https://mesto.nomoreparties.co/v1/cohort-50',
+  authUrl: 'https://auth.nomoreparties.co',
+  authHeaders: {
+    'Content-Type': 'application/json',
+  },
   headers: {
     authorization: 'b4e2c2b5-478c-44a2-8411-ea93c0b3b5ee',
     'Content-Type': 'application/json'

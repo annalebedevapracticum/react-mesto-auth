@@ -8,3 +8,8 @@
     margin-top: 15px;
     border: none;
 }
+
+.login__entry:hover {
+    opacity: 0.6;
+    cursor: pointer;
+}

@@ -8,3 +8,8 @@
     background: none;
     border: none;
 }
+
+.header__action-text:hover {
+    opacity: 0.6;
+    cursor: pointer;
+}
