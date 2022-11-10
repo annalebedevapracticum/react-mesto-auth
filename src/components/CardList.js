@@ -23,7 +23,6 @@ function CardList() {
   useEffect(() => {
     apiInstance.getUserInfo().then(setCurrentUser)
       .catch((error) => console.log(`Ошибка: ${error}`));
-
   }, [])
 
   useEffect(() => {

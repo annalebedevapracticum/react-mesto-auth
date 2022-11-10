@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom';
 import Login from './Login.js';
 import Register from './Register.js';
@@ -9,16 +9,11 @@ import InfoTooltip from './InfoTooltip.js';
 import { apiInstance } from '../utils/Api.js';
 
 const App = () => {
-    const [userData, setUserData] = useState({
-        _id: '', email: ''
-    })
+    const [userData, setUserData] = useState({ _id: '', email: '' });
     const [loggedIn, setLoggedIn] = useState(false);
-    const [currentPage, setCurrentPage] = useState(window.location.pathname);
-    const [loading, setLoading] = useState(false);
     const [infoTooltipData, setInfoTooltipData] = useState({ visibility: false, isError: false });
 
-    const cbLogin = useCallback(async ({ email, password }) => {
-        setLoading(true);
+    const cbLogin = async ({ email, password }) => {
         try {
             const { token } = await apiInstance.authorize({ email, password });
             localStorage.setItem('token', token);
@@ -26,50 +21,35 @@ const App = () => {
             return Promise.resolve();
         } catch {
             setInfoTooltipData({ visibility: true, isError: true });
-        } finally {
-            setLoading(false);
         }
-    }, []);
+    };
 
-    const cbRegister = useCallback(async ({ email, password }) => {
-        setLoading(true);
+    const cbRegister = async ({ email, password }) => {
         try {
             await apiInstance.register({ email, password });
             setInfoTooltipData({ visibility: true, isError: false });
         } catch {
             setInfoTooltipData({ visibility: true, isError: true });
-        } finally {
-            setLoading(false);
+            throw new Error('registrtion error');
         }
-    }, []);
+    };
 
-    const cbLogout = useCallback(() => {
+    const cbLogout = () => {
         localStorage.removeItem('token');
         setLoggedIn(false);
-    }, []);
+    };
 
-    const cbTokenCheck = useCallback(async () => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                throw new Error('no token');
-            }
-            const { data } = await apiInstance.checkMe(token);
-            if (data.email) {
-                setLoggedIn(true);
-                setUserData(data);
-            }
-        } finally {
-            setLoading(false);
+    const cbTokenCheck = async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('no token');
         }
-    }, []);
-
-    const handleLoginClick = () => {
-        setCurrentPage('/sign-in');
-    }
-    const handleRegistrationClick = () => {
-        setCurrentPage('/sign-up');
-    }
+        const { data } = await apiInstance.checkMe(token);
+        if (data.email) {
+            setLoggedIn(true);
+            setUserData(data);
+        }
+    };
 
     const handleInfoClose = () => {
         setInfoTooltipData({ isError: false, visibility: false });
@@ -79,34 +59,40 @@ const App = () => {
         cbTokenCheck();
     }, [loggedIn]);
 
-    // if (loading) {
-    //     return '...Loading';
-    // }
-
     return (
         <div className="wrapper">
             <div className="page">
                 <BrowserRouter>
-                    {loggedIn && <Navigate to='/' />}
-                    <Header
-                        isLogged={loggedIn}
-                        currentPage={currentPage}
-                        handleLoginClick={handleLoginClick}
-                        handleRegistrationClick={handleRegistrationClick}
-                        onLogOut={cbLogout}
-                        email={userData.email}
-                    />
+                    {loggedIn && window.location.pathname !== '/' && <Navigate to='/' />}
                     <div className="content">
                         <Routes>
-                            <Route path="/sign-in" element={<Login isLoggedId={loggedIn} onLogin={cbLogin} />} />
-                            <Route path="/sign-up" element={<Register onRegister={cbRegister} handleLoginClick={handleLoginClick} />} />
+                            <Route path="/sign-in" element={<>
+                                <Header
+                                    onLogOut={cbLogout}
+                                    email={userData.email}
+                                />
+                                <Login isLoggedId={loggedIn} onLogin={cbLogin} />
+                            </>} />
+                            <Route path="/sign-up" element={<>
+                                <Header
+                                    isSignUp
+                                    onLogOut={cbLogout}
+                                    email={userData.email}
+                                />
+                                <Register onRegister={cbRegister} />
+                            </>} />
                             <Route path="/" element={
                                 <ProtectedRoute loggedIn={loggedIn}>
+                                    <Header
+                                        isLogged
+                                        onLogOut={cbLogout}
+                                        email={userData.email}
+                                    />
                                     <CardList />
                                 </ProtectedRoute>
                             } />
                         </Routes>
-                        <InfoTooltip isError={infoTooltipData.isError} isOpen={infoTooltipData.visibility} onClose={handleInfoClose} />
+                        {infoTooltipData.visibility && <InfoTooltip isError={infoTooltipData.isError} isOpen={infoTooltipData.visibility} onClose={handleInfoClose} />}
                     </div>
                 </BrowserRouter>
             </div>
