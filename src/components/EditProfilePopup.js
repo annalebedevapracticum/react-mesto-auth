@@ -5,7 +5,7 @@ import PopupWithForm from "./PopupWithForm";
 function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
     const [name, setName] = React.useState('');
     const [about, setAbout] = React.useState('');
-    const { currentUser, loading, setLoading } = React.useContext(CurrentUserContext);
+    const { currentUser, loading } = React.useContext(CurrentUserContext);
 
     React.useEffect(() => {
         setName(currentUser.name);
@@ -21,13 +21,10 @@ function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        setLoading(true);
         onUpdateUser({
             name,
             about,
-        }).finally(() => {
-            setLoading(false);
-        });
+        })
     }
 
     return (

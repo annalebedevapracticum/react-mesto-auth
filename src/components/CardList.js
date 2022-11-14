@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Footer from "./Footer";
 import Main from "./Main";
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { apiInstance } from "../utils/Api";
@@ -80,25 +79,31 @@ function CardList() {
   }
 
   const handleUpdateUser = ({ name, about }) => {
+    setLoading(true);
     return apiInstance.updateProfileInfo(name, about)
       .then(info => {
         setCurrentUser(info);
+        setLoading(false);
         closeAllPopups();
       })
       .catch((error) => console.log(`Ошибка: ${error}`));
   }
 
   const handleUpdateAvatar = ({ avatar }) => {
+    setLoading(true);
     return apiInstance.updateAvatar(avatar).then(info => {
       setCurrentUser(info);
+      setLoading(false);
       closeAllPopups();
     })
       .catch((error) => console.log(`Ошибка: ${error}`));
   }
 
   const handleAddPlaceSubmit = ({ name, link }) => {
+    setLoading(true);
     return apiInstance.addCard(name, link).then(newCard => {
       setCards([newCard, ...cards]);
+      setLoading(false);
       closeAllPopups();
     })
       .catch((error) => console.log(`Ошибка: ${error}`));
@@ -107,8 +112,7 @@ function CardList() {
   return (
     <CurrentUserContext.Provider value={{
       currentUser,
-      loading,
-      setLoading
+      loading
     }}>
       <Main onEditProfile={handleEditProfileClick}
         onAddPlace={handleAddPlaceClick}
@@ -124,8 +128,6 @@ function CardList() {
       <AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups} onAddPlace={handleAddPlaceSubmit} />
       <ImagePopup isOpen={!!selectedCard} onClose={closeAllPopups} selectedCard={selectedCard} />
       <PopupWithForm name='confirmation' title='Вы уверены?' isOpen={isConfirmationPopupOpen} onClose={closeAllPopups} submitText="Да" onSubmit={handleConfirmationSubmit} isLoading={loading} />
-
-      <Footer />
     </CurrentUserContext.Provider>
   );
 }

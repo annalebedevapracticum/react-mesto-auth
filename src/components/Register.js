@@ -6,7 +6,8 @@ function Register({ onRegister }) {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleRegister = () => {
+    const handleRegister = (e) => {
+        e.preventDefault();
         onRegister({ email, password }).then(() => {
             navigate('/sign-in');
         })
@@ -20,15 +21,13 @@ function Register({ onRegister }) {
     }
 
     return (
-        <div>
-            <div className="login">
+            <form className="login" onSubmit={handleRegister}>
                 <h2 className="login__welcome">Регистрация</h2>
                 <input id="email" className="login__input" value={email} onChange={handleEmailChange} name="email" type="email" placeholder="Email" />
                 <input id="password" className="login__input" value={password} onChange={handlePasswordChange}  name="password" type="password" placeholder="Пароль" />
-                <button type="submit" className="login__button" onClick={handleRegister}>Зарегистрироваться</button>
+                <button type="submit" className="login__button">Зарегистрироваться</button>
                 <Link to='/sign-in' className="login__entry">Уже зарегистрированы? Войти</Link>
-            </div>
-        </div>
+            </form>
     )
 }
 

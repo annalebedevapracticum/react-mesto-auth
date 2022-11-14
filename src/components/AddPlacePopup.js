@@ -5,7 +5,7 @@ import PopupWithForm from "./PopupWithForm";
 function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
     const [name, setName] = React.useState('');
     const [link, setLink] = React.useState('');
-    const { loading, setLoading } = React.useContext(CurrentUserContext);
+    const { loading } = React.useContext(CurrentUserContext);
 
     function handleNameChange(e) {
         setName(e.target.value);
@@ -16,13 +16,10 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        setLoading(true);
         onAddPlace({
             name,
             link
-        }).finally(() => {
-            setLoading(false);
-        });
+        })
     }
 
     React.useEffect(() => {

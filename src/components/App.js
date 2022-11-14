@@ -7,13 +7,14 @@ import CardList from './CardList.js';
 import Header from './Header.js';
 import InfoTooltip from './InfoTooltip.js';
 import { apiInstance } from '../utils/Api.js';
+import Footer from './Footer.js';
 
 const App = () => {
-    const [userData, setUserData] = useState({ _id: '', email: '' });
+    const [user, setUser] = useState({ _id: '', email: '' });
     const [loggedIn, setLoggedIn] = useState(false);
     const [infoTooltipData, setInfoTooltipData] = useState({ visibility: false, isError: false });
 
-    const cbLogin = async ({ email, password }) => {
+    const login = async ({ email, password }) => {
         try {
             const { token } = await apiInstance.authorize({ email, password });
             localStorage.setItem('token', token);
@@ -24,7 +25,7 @@ const App = () => {
         }
     };
 
-    const cbRegister = async ({ email, password }) => {
+    const register = async ({ email, password }) => {
         try {
             await apiInstance.register({ email, password });
             setInfoTooltipData({ visibility: true, isError: false });
@@ -34,20 +35,20 @@ const App = () => {
         }
     };
 
-    const cbLogout = () => {
+    const logout = () => {
         localStorage.removeItem('token');
         setLoggedIn(false);
     };
 
-    const cbTokenCheck = async () => {
+    const checkToken = async () => {
         const token = localStorage.getItem('token');
         if (!token) {
-            throw new Error('no token');
+            return;
         }
         const { data } = await apiInstance.checkMe(token);
         if (data.email) {
             setLoggedIn(true);
-            setUserData(data);
+            setUser(data);
         }
     };
 
@@ -56,7 +57,7 @@ const App = () => {
     }
 
     useEffect(() => {
-        cbTokenCheck();
+        checkToken();
     }, [loggedIn]);
 
     return (
@@ -64,36 +65,27 @@ const App = () => {
             <div className="page">
                 <BrowserRouter>
                     {loggedIn && window.location.pathname !== '/' && <Navigate to='/' />}
+                    <Header
+                        onLogOut={logout}
+                        email={user.email}
+                    />
                     <div className="content">
                         <Routes>
                             <Route path="/sign-in" element={<>
-                                <Header
-                                    onLogOut={cbLogout}
-                                    email={userData.email}
-                                />
-                                <Login isLoggedId={loggedIn} onLogin={cbLogin} />
+                                <Login isLoggedId={loggedIn} onLogin={login} />
                             </>} />
-                            <Route path="/sign-up" element={<>
-                                <Header
-                                    isSignUp
-                                    onLogOut={cbLogout}
-                                    email={userData.email}
-                                />
-                                <Register onRegister={cbRegister} />
-                            </>} />
+                            <Route path="/sign-up" element={
+                                <Register onRegister={register} />
+                            } />
                             <Route path="/" element={
                                 <ProtectedRoute loggedIn={loggedIn}>
-                                    <Header
-                                        isLogged
-                                        onLogOut={cbLogout}
-                                        email={userData.email}
-                                    />
                                     <CardList />
                                 </ProtectedRoute>
                             } />
                         </Routes>
                         {infoTooltipData.visibility && <InfoTooltip isError={infoTooltipData.isError} isOpen={infoTooltipData.visibility} onClose={handleInfoClose} />}
                     </div>
+                    <Footer />
                 </BrowserRouter>
             </div>
         </div>
