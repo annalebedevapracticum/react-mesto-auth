@@ -45,7 +45,7 @@ const App = () => {
         if (!token) {
             return;
         }
-        const { data } = await apiInstance.checkMe(token);
+        const { data } = await apiInstance.checkMe();
         if (data.email) {
             setLoggedIn(true);
             setUser(data);

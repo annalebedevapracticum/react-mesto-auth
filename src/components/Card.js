@@ -3,7 +3,7 @@ import React from "react";
 
 function Card({ link, name, likes, owner, onImageClick, onCardLike, onCardDelete }) {
     const { currentUser } = React.useContext(CurrentUserContext);
-    const isLiked = likes.some(item => item._id === currentUser._id)
+    const isLiked = likes.some(item => item === currentUser._id)
 
     const isOwner = owner._id === currentUser._id;
     return (
