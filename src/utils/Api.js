@@ -124,7 +124,7 @@ export default Api;
 //Если файл с маленькой буквы, не проходит проверку на автотестах
 
 export const apiInstance = new Api({
-  baseUrl: 'http://lebedeva.back.nomoredomains.club',
+  baseUrl: 'https://lebedeva.back.nomoredomains.club',
   headers: {
     'Content-Type': 'application/json'
   }
